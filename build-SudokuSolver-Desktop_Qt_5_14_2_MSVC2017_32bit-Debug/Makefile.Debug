@@ -281,6 +281,7 @@ debug\moc_sudokusolver.cpp: ..\SudokuSolver\sudokusolver.h \
 		C:\Qt\5.14.2\msvc2017\include\QtCore\qfiledevice.h \
 		C:\Qt\5.14.2\msvc2017\include\QtGui\qvector2d.h \
 		C:\Qt\5.14.2\msvc2017\include\QtGui\qtouchdevice.h \
+		C:\Qt\5.14.2\msvc2017\include\QtCore\QtDebug \
 		debug\moc_predefs.h \
 		C:\Qt\5.14.2\msvc2017\bin\moc.exe
 	C:\Qt\5.14.2\msvc2017\bin\moc.exe $(DEFINES) --compiler-flavor=msvc --include C:/Users/spudm/Documents/GitHub/Sudoku-Solver/build-SudokuSolver-Desktop_Qt_5_14_2_MSVC2017_32bit-Debug/debug/moc_predefs.h -IC:/Qt/5.14.2/msvc2017/mkspecs/win32-msvc -IC:/Users/spudm/Documents/GitHub/Sudoku-Solver/SudokuSolver -IC:/Qt/5.14.2/msvc2017/include -IC:/Qt/5.14.2/msvc2017/include/QtWidgets -IC:/Qt/5.14.2/msvc2017/include/QtGui -IC:/Qt/5.14.2/msvc2017/include/QtANGLE -IC:/Qt/5.14.2/msvc2017/include/QtCore -I. -I"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\ATLMFC\include" -I"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\include" -I"C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\include\um" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\ucrt" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\shared" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\winrt" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\cppwinrt" ..\SudokuSolver\sudokusolver.h -o debug\moc_sudokusolver.cpp
@@ -413,6 +414,7 @@ debug\main.obj: ..\SudokuSolver\main.cpp ..\SudokuSolver\sudokusolver.h \
 		C:\Qt\5.14.2\msvc2017\include\QtCore\qfiledevice.h \
 		C:\Qt\5.14.2\msvc2017\include\QtGui\qvector2d.h \
 		C:\Qt\5.14.2\msvc2017\include\QtGui\qtouchdevice.h \
+		C:\Qt\5.14.2\msvc2017\include\QtCore\QtDebug \
 		C:\Qt\5.14.2\msvc2017\include\QtWidgets\QApplication \
 		C:\Qt\5.14.2\msvc2017\include\QtWidgets\qapplication.h \
 		C:\Qt\5.14.2\msvc2017\include\QtCore\qcoreapplication.h \
@@ -526,6 +528,7 @@ debug\sudokusolver.obj: ..\SudokuSolver\sudokusolver.cpp ..\SudokuSolver\sudokus
 		C:\Qt\5.14.2\msvc2017\include\QtCore\qfiledevice.h \
 		C:\Qt\5.14.2\msvc2017\include\QtGui\qvector2d.h \
 		C:\Qt\5.14.2\msvc2017\include\QtGui\qtouchdevice.h \
+		C:\Qt\5.14.2\msvc2017\include\QtCore\QtDebug \
 		ui_sudokusolver.h
 
 debug\moc_sudokusolver.obj: debug\moc_sudokusolver.cpp 

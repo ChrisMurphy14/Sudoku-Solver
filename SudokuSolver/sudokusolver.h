@@ -1,11 +1,13 @@
 ////////////////////////////////////////
 // Author:              Chris Murphy
 // Date created:        04.06.20
-// Date last edited:    04.06.20
+// Date last edited:    05.06.20
 ////////////////////////////////////////
 #ifndef SUDOKUSOLVER_H
 #define SUDOKUSOLVER_H
 #include <QWidget>
+#include <QtDebug>
+#include <QSpinBox>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class SudokuSolver; }
@@ -23,6 +25,7 @@ public:
 
 private:
     Ui::SudokuSolver* ui; // A dynamic pointer to the ui object used to handle the widget and its elements.
+    //QList<QSpinBox*> cellRegions;
 };
 
 #endif
