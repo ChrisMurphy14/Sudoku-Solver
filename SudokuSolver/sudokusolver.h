@@ -25,7 +25,9 @@ public:
 
 private:
     Ui::SudokuSolver* ui; // A dynamic pointer to the ui object used to handle the widget and its elements.
-    //QList<QSpinBox*> cellRegions;
+    QList<QList<QSpinBox*>> rows; // A list of nine lists, each of which contains all the cells of one row of the sudoku grid.
+    QList<QList<QSpinBox*>> columns; // A list of nine lists, each of which contains all the cells of one column of the sudoku grid.
+    QList<QList<QSpinBox*>> regions; // A list of nine lists, each of which contains all the cells of one 9x9 'region' block of the sudoku grid.
 };
 
 #endif
