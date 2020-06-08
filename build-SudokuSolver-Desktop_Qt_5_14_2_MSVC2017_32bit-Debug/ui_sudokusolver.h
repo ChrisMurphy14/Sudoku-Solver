@@ -26,7 +26,7 @@ public:
     QPushButton *solveButton;
     QFrame *line;
     QFrame *horizontalLine1;
-    QWidget *widget;
+    QWidget *layoutWidget;
     QVBoxLayout *region00;
     QHBoxLayout *horizontalLayout;
     QSpinBox *cell00;
@@ -181,15 +181,15 @@ public:
         horizontalLine1->setGeometry(QRect(290, 60, 20, 91));
         horizontalLine1->setFrameShape(QFrame::VLine);
         horizontalLine1->setFrameShadow(QFrame::Sunken);
-        widget = new QWidget(SudokuSolver);
-        widget->setObjectName(QString::fromUtf8("widget"));
-        widget->setGeometry(QRect(180, 60, 109, 89));
-        region00 = new QVBoxLayout(widget);
+        layoutWidget = new QWidget(SudokuSolver);
+        layoutWidget->setObjectName(QString::fromUtf8("layoutWidget"));
+        layoutWidget->setGeometry(QRect(180, 60, 109, 89));
+        region00 = new QVBoxLayout(layoutWidget);
         region00->setObjectName(QString::fromUtf8("region00"));
         region00->setContentsMargins(0, 0, 0, 0);
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
-        cell00 = new QSpinBox(widget);
+        cell00 = new QSpinBox(layoutWidget);
         cell00->setObjectName(QString::fromUtf8("cell00"));
         cell00->setEnabled(true);
         cell00->setMaximum(9);
@@ -197,7 +197,7 @@ public:
 
         horizontalLayout->addWidget(cell00);
 
-        cell10 = new QSpinBox(widget);
+        cell10 = new QSpinBox(layoutWidget);
         cell10->setObjectName(QString::fromUtf8("cell10"));
         cell10->setEnabled(true);
         cell10->setMaximum(9);
@@ -205,7 +205,7 @@ public:
 
         horizontalLayout->addWidget(cell10);
 
-        cell20 = new QSpinBox(widget);
+        cell20 = new QSpinBox(layoutWidget);
         cell20->setObjectName(QString::fromUtf8("cell20"));
         cell20->setEnabled(true);
         cell20->setMaximum(9);
@@ -218,7 +218,7 @@ public:
 
         horizontalLayout_2 = new QHBoxLayout();
         horizontalLayout_2->setObjectName(QString::fromUtf8("horizontalLayout_2"));
-        cell01 = new QSpinBox(widget);
+        cell01 = new QSpinBox(layoutWidget);
         cell01->setObjectName(QString::fromUtf8("cell01"));
         cell01->setEnabled(true);
         cell01->setMaximum(9);
@@ -226,7 +226,7 @@ public:
 
         horizontalLayout_2->addWidget(cell01);
 
-        cell11 = new QSpinBox(widget);
+        cell11 = new QSpinBox(layoutWidget);
         cell11->setObjectName(QString::fromUtf8("cell11"));
         cell11->setEnabled(true);
         cell11->setMaximum(9);
@@ -234,7 +234,7 @@ public:
 
         horizontalLayout_2->addWidget(cell11);
 
-        cell21 = new QSpinBox(widget);
+        cell21 = new QSpinBox(layoutWidget);
         cell21->setObjectName(QString::fromUtf8("cell21"));
         cell21->setEnabled(true);
         cell21->setMaximum(9);
@@ -247,7 +247,7 @@ public:
 
         horizontalLayout_3 = new QHBoxLayout();
         horizontalLayout_3->setObjectName(QString::fromUtf8("horizontalLayout_3"));
-        cell02 = new QSpinBox(widget);
+        cell02 = new QSpinBox(layoutWidget);
         cell02->setObjectName(QString::fromUtf8("cell02"));
         cell02->setEnabled(true);
         cell02->setMaximum(9);
@@ -255,7 +255,7 @@ public:
 
         horizontalLayout_3->addWidget(cell02);
 
-        cell12 = new QSpinBox(widget);
+        cell12 = new QSpinBox(layoutWidget);
         cell12->setObjectName(QString::fromUtf8("cell12"));
         cell12->setEnabled(true);
         cell12->setMaximum(9);
@@ -263,7 +263,7 @@ public:
 
         horizontalLayout_3->addWidget(cell12);
 
-        cell22 = new QSpinBox(widget);
+        cell22 = new QSpinBox(layoutWidget);
         cell22->setObjectName(QString::fromUtf8("cell22"));
         cell22->setEnabled(true);
         cell22->setMaximum(9);
