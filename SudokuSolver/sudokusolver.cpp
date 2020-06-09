@@ -1,7 +1,7 @@
 ////////////////////////////////////////
 // Author:              Chris Murphy
 // Date created:        04.06.20
-// Date last edited:    08.06.20
+// Date last edited:    09.06.20
 ////////////////////////////////////////
 #include "sudokusolver.h"
 #include "ui_sudokusolver.h"
@@ -63,6 +63,19 @@ void SudokuSolver::on_solveButton_clicked()
         //spinBoxes[i]->setEnabled(false);
     }
     ui->solveButton->setEnabled(false);
+
+
+    for(int i = rows.count() - 1; i > -1; --i)
+    {
+        for(int j = rows.count() - 1; j > -1; --j)
+        {
+            if(rows[i][j].getValue() == 0)
+                cellsToSolve.push(rows[i][j]);
+        }
+    }
+    solvingStack.push(cellsToSolve.top());
+    cellsToSolve.pop();
+    solvingStack.top().setValue(1);
 }
 
 //SudokuSolver::SudokuSubsectionState SudokuSolver::getSubsectionState(QList<SudokuCell> subsectionCells) const
@@ -113,21 +126,12 @@ bool SudokuSolver::getIfNonZeroValueRepeatsInCells(const QList<SudokuCell>& cell
 
 void SudokuSolver::updateSolving()
 {
-    QStack<SudokuCell> cellsToSolve;
-    for(int i = rows.count() - 1; i > -1; --i)
-    {
-        for(int j = rows.count() - 1; j > -1; --j)
-        {
-            cellsToSolve.push(rows[i][j]);
-        }
-    }
 
-    QStack<SudokuCell> solvingStack;
-    solvingStack.push(cellsToSolve.top());
-    cellsToSolve.pop();
-    solvingStack.top().setValue(1);
 
-    if(getIfCellValueIsValid(solvingStack.top()))
+
+
+
+    if(solvingStack.top().getValue() <= 9 && getIfCellValueIsValid(solvingStack.top()))
     {
         solvingStack.push(cellsToSolve.top());
         cellsToSolve.pop();
@@ -142,8 +146,41 @@ void SudokuSolver::updateSolving()
             solvingStack.top().setValue(0);
             cellsToSolve.push(solvingStack.top());
             solvingStack.pop();
+
+            // If a cell is discovered where none of the 9 digits is allowed,
+            // then the algorithm leaves that cell blank and moves back to the previous cell. The value in that cell is then incremented by one.
+            if(solvingStack.top().getValue() + 1 < 9)
+                solvingStack.top().setValue(solvingStack.top().getValue() + 1);
+            else
+            {
+                solvingStack.top().setValue(0);
+                cellsToSolve.push(solvingStack.top());
+                solvingStack.pop();
+
+                if(solvingStack.top().getValue() + 1 < 9)
+                    solvingStack.top().setValue(solvingStack.top().getValue() + 1);
+                else
+                {
+                    solvingStack.top().setValue(0);
+                    cellsToSolve.push(solvingStack.top());
+                    solvingStack.pop();
+
+                    if(solvingStack.top().getValue() + 1 < 9)
+                        solvingStack.top().setValue(solvingStack.top().getValue() + 1);
+                    else
+                    {
+                        solvingStack.top().setValue(0);
+                        cellsToSolve.push(solvingStack.top());
+                        solvingStack.pop();
+
+                        solvingStack.top().setValue(solvingStack.top().getValue() + 1);
+                    }
+                }
+            }
         }
     }
+
+
 
     //        if(cellsToSolve.top().getValue() < 9)
     //        {
@@ -159,4 +196,5 @@ void SudokuSolver::updateSolving()
 
 
     qDebug() << "updateSolving() called";
+
 }

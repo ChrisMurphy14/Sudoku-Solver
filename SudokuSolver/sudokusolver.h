@@ -1,7 +1,7 @@
 ////////////////////////////////////////
 // Author:              Chris Murphy
 // Date created:        04.06.20
-// Date last edited:    08.06.20
+// Date last edited:    09.06.20
 ////////////////////////////////////////
 #ifndef SUDOKUSOLVER_H
 #define SUDOKUSOLVER_H
@@ -42,7 +42,9 @@ private:
     QList<QList<SudokuCell>> rows; // A list of nine lists, each of which contains all the cells of one row of the sudoku grid.
     QList<QList<SudokuCell>> columns; // A list of nine lists, each of which contains all the cells of one column of the sudoku grid.
     QList<QList<SudokuCell>> regions; // A list of nine lists, each of which contains all the cells of one 9x9 'region' block of the sudoku grid.
-    const int updateSolverCallInterval = 500; // The number of milliseconds between each call of the updateSolver() function when the sudoku is in the process of being solved.
+    QStack<SudokuCell> cellsToSolve; // A stack used to contain the empty cells to be solved during the solving process.
+    QStack<SudokuCell> solvingStack; // A stack used to contain the cells which have been modified during the depth-first solving process.
+    const int updateSolverCallInterval = 2; // The number of milliseconds between each call of the updateSolver() function when the sudoku is in the process of being solved.
 
     //// Returns the current state (incomplete, invalid, or complete) of a list of 9 sudoku cells representing either a row, column, or region within the sudoku grid.
     //SudokuSubsectionState getSubsectionState(QList<SudokuCell> subsectionCells) const;
