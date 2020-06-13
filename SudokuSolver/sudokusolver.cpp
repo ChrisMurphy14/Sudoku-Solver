@@ -42,19 +42,10 @@ SudokuSolver::~SudokuSolver()
 
 void SudokuSolver::on_solveButton_clicked()
 {
-    // Creates a timer which regularly calls the updateSolving() function.
+    // Creates a timer to repeatedly call the updateSolving() function until the puzzle is solved/deemed invalid.
     QTimer* timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, QOverload<>::of(&SudokuSolver::updateSolving));
     timer->start(updateSolverCallInterval);
-
-    //    // Flags every cell with an existing value as a 'clue cell' that cannot be changed during the solving process.
-    //    for(int i = 0; i < rows.count(); ++i)
-    //    {
-    //        for(int j = 0; j < rows.count(); ++j)
-    //        {
-    //            rows[i][j].isClueCell = rows[i][j].getValue() != 0;
-    //        }
-    //    }
 
     // Disables the spinboxes and solve button so that the user cannot interfere with the solving process.
     QList<QSpinBox*> spinBoxes = this->findChildren<QSpinBox*>();
@@ -64,40 +55,20 @@ void SudokuSolver::on_solveButton_clicked()
     }
     ui->solveButton->setEnabled(false);
 
-
+    // Adds each of the currently empty cells to the stack of cells to be solved - does this in reverse order so the initial cell on the top of the stack is the closest to the upper-left.
     for(int i = rows.count() - 1; i > -1; --i)
     {
         for(int j = rows.count() - 1; j > -1; --j)
         {
             if(rows[i][j].getValue() == 0)
-                cellsToSolve.push(rows[i][j]);
+                emptyCellsStack.push(rows[i][j]);
         }
     }
-    solvingStack.push(cellsToSolve.top());
-    cellsToSolve.pop();
+    // Moves the first cell to be solved to the top of the solving stack and sets the initial value to 1 to begin the solving process.
+    solvingStack.push(emptyCellsStack.top());
+    emptyCellsStack.pop();
     solvingStack.top().setValue(1);
 }
-
-//SudokuSolver::SudokuSubsectionState SudokuSolver::getSubsectionState(QList<SudokuCell> subsectionCells) const
-//{
-//    Q_ASSERT(subsectionCells.count() == 9);
-
-//    QList<int> subsectionCellValues; // A list containing the current number value for each cell spinbox in the subsection.
-//    for(int i = 0; i < subsectionCells.count(); ++i)
-//    {
-//        subsectionCellValues.append(subsectionCells[i].getValue());
-//    }
-
-//    // If the subsection contains a zero, this means at least one of the cells is still 'empty' and the subsection is incomplete.
-//    if(subsectionCellValues.contains(0))
-//        return SudokuSubsectionState::Incomplete;
-//    // Else if the subsection contains a repeating number (QSets cannot contain duplicate values so if the range of values is smaller in a set than in a list, at least one duplicate value is present), the subsection is invalid.
-//    else if(subsectionCellValues.toSet().count() < subsectionCellValues.count())
-//        return SudokuSubsectionState::Invalid;
-//    // Else the subsection is filled with a valid range from 1 - 9 and the subsection is complete.
-//    else
-//        return SudokuSubsectionState::Complete;
-//}
 
 bool SudokuSolver::getIfCellValueIsValid(const SudokuCell& cell)
 {
@@ -126,75 +97,42 @@ bool SudokuSolver::getIfNonZeroValueRepeatsInCells(const QList<SudokuCell>& cell
 
 void SudokuSolver::updateSolving()
 {
-
-
-
-
-
+    // If the current top cell in the solving stack contains a valid value, adds the next empty cell to the solving stack and changes its value to 1.
     if(solvingStack.top().getValue() <= 9 && getIfCellValueIsValid(solvingStack.top()))
     {
-        solvingStack.push(cellsToSolve.top());
-        cellsToSolve.pop();
+        solvingStack.push(emptyCellsStack.top());
+        emptyCellsStack.pop();
         solvingStack.top().setValue(1);
     }
+    // Else if the current top cell in the solving stack contains an invalid value:
     else
     {
+        // Iterates the value if it is less than 9.
         if(solvingStack.top().getValue() < 9)
             solvingStack.top().setValue(solvingStack.top().getValue() + 1);
+        // Else if it equals 9, sets that cell to be blank, adds it back to the empty cells stack, then pops the solving stack cells until a valid (non-9) cell is found and increments its value by 1.
         else
         {
             solvingStack.top().setValue(0);
-            cellsToSolve.push(solvingStack.top());
+            emptyCellsStack.push(solvingStack.top());
             solvingStack.pop();
 
-            // If a cell is discovered where none of the 9 digits is allowed,
-            // then the algorithm leaves that cell blank and moves back to the previous cell. The value in that cell is then incremented by one.
-            if(solvingStack.top().getValue() + 1 < 9)
-                solvingStack.top().setValue(solvingStack.top().getValue() + 1);
-            else
-            {
-                solvingStack.top().setValue(0);
-                cellsToSolve.push(solvingStack.top());
-                solvingStack.pop();
-
-                if(solvingStack.top().getValue() + 1 < 9)
-                    solvingStack.top().setValue(solvingStack.top().getValue() + 1);
-                else
-                {
-                    solvingStack.top().setValue(0);
-                    cellsToSolve.push(solvingStack.top());
-                    solvingStack.pop();
-
-                    if(solvingStack.top().getValue() + 1 < 9)
-                        solvingStack.top().setValue(solvingStack.top().getValue() + 1);
-                    else
-                    {
-                        solvingStack.top().setValue(0);
-                        cellsToSolve.push(solvingStack.top());
-                        solvingStack.pop();
-
-                        solvingStack.top().setValue(solvingStack.top().getValue() + 1);
-                    }
-                }
-            }
+            moveToPreviousValidCellAndIncrement();
         }
     }
+}
 
+// A recursive function which pops the solving stack cells until a valid (non-9) cell is found, then increments its value by 1.
+void SudokuSolver::moveToPreviousValidCellAndIncrement()
+{
+    if(solvingStack.top().getValue() + 1 <= 9)
+        solvingStack.top().setValue(solvingStack.top().getValue() + 1);
+    else
+    {
+        solvingStack.top().setValue(0);
+        emptyCellsStack.push(solvingStack.top());
+        solvingStack.pop();
 
-
-    //        if(cellsToSolve.top().getValue() < 9)
-    //        {
-    //            cellsToSolve.top().setValue(cellsToSolve.top().getValue() + 1);
-    //        }
-    //        else
-    //        {
-    //            cellsToSolve.pop();
-    //        }
-
-
-
-
-
-    qDebug() << "updateSolving() called";
-
+        moveToPreviousValidCellAndIncrement();
+    }
 }

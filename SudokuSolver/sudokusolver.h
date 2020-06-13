@@ -1,7 +1,7 @@
 ////////////////////////////////////////
 // Author:              Chris Murphy
 // Date created:        04.06.20
-// Date last edited:    09.06.20
+// Date last edited:    13.06.20
 ////////////////////////////////////////
 #ifndef SUDOKUSOLVER_H
 #define SUDOKUSOLVER_H
@@ -30,24 +30,13 @@ private slots:
     void on_solveButton_clicked();
 
 private:
-    // Enumerated values representing the possible states of a sub-section of the cells (e.g. row, column, region) within the sudoku grid.
-    enum SudokuSubsectionState
-    {
-        Incomplete, // There are no recurring numbers other than at least one zero (represents an 'empty' cell).
-        Invalid, // There is at least one recurring number within the collection other than zero (e.g. if a row has two nines, it is invalid according the sudoku rules).
-        Complete // There are no empty cells and no recurring numbers.
-    };
-
     Ui::SudokuSolver* ui; // A dynamic pointer to the ui object used to handle the widget and its elements.
     QList<QList<SudokuCell>> rows; // A list of nine lists, each of which contains all the cells of one row of the sudoku grid.
     QList<QList<SudokuCell>> columns; // A list of nine lists, each of which contains all the cells of one column of the sudoku grid.
     QList<QList<SudokuCell>> regions; // A list of nine lists, each of which contains all the cells of one 9x9 'region' block of the sudoku grid.
-    QStack<SudokuCell> cellsToSolve; // A stack used to contain the empty cells to be solved during the solving process.
+    QStack<SudokuCell> emptyCellsStack; // A stack used to contain the empty cells to be solved during the solving process.
     QStack<SudokuCell> solvingStack; // A stack used to contain the cells which have been modified during the depth-first solving process.
-    const int updateSolverCallInterval = 2; // The number of milliseconds between each call of the updateSolver() function when the sudoku is in the process of being solved.
-
-    //// Returns the current state (incomplete, invalid, or complete) of a list of 9 sudoku cells representing either a row, column, or region within the sudoku grid.
-    //SudokuSubsectionState getSubsectionState(QList<SudokuCell> subsectionCells) const;
+    const int updateSolverCallInterval = 1; // The number of milliseconds between each call of the updateSolver() function when the sudoku is in the process of being solved.
 
     // Checks the row, column, and region that the specified cell belongs to in order to see if its current number value is repeated in any of them - returns true if not, else returns false.
     bool getIfCellValueIsValid(const SudokuCell& cell);
@@ -55,9 +44,11 @@ private:
     // Returns whether or not the specified non-zero value between 1 and 9 repeats more than once within the list of cells.
     bool getIfNonZeroValueRepeatsInCells(const QList<SudokuCell>& cells, int v) const;
 
-
-
+    // The function used to run through a single iteration of the algorithm to solve the current sudoku puzzle.
     void updateSolving();
+
+    //
+    void moveToPreviousValidCellAndIncrement();
 };
 
 #endif
