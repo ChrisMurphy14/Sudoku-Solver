@@ -13,6 +13,7 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QFrame>
 #include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QLabel>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QSpinBox>
 #include <QtWidgets/QVBoxLayout>
@@ -162,6 +163,10 @@ public:
     QFrame *line_4;
     QFrame *line_5;
     QFrame *line_6;
+    QLabel *solveTimeLabel;
+    QLabel *solveCyclesLabel;
+    QLabel *generalLabel;
+    QPushButton *clearButton;
 
     void setupUi(QWidget *SudokuSolver)
     {
@@ -1068,6 +1073,18 @@ public:
         line_6->setGeometry(QRect(180, 260, 111, 20));
         line_6->setFrameShape(QFrame::HLine);
         line_6->setFrameShadow(QFrame::Sunken);
+        solveTimeLabel = new QLabel(SudokuSolver);
+        solveTimeLabel->setObjectName(QString::fromUtf8("solveTimeLabel"));
+        solveTimeLabel->setGeometry(QRect(470, 410, 221, 16));
+        solveCyclesLabel = new QLabel(SudokuSolver);
+        solveCyclesLabel->setObjectName(QString::fromUtf8("solveCyclesLabel"));
+        solveCyclesLabel->setGeometry(QRect(470, 440, 221, 16));
+        generalLabel = new QLabel(SudokuSolver);
+        generalLabel->setObjectName(QString::fromUtf8("generalLabel"));
+        generalLabel->setGeometry(QRect(280, 480, 301, 16));
+        clearButton = new QPushButton(SudokuSolver);
+        clearButton->setObjectName(QString::fromUtf8("clearButton"));
+        clearButton->setGeometry(QRect(180, 410, 80, 21));
 
         retranslateUi(SudokuSolver);
 
@@ -1078,6 +1095,10 @@ public:
     {
         SudokuSolver->setWindowTitle(QCoreApplication::translate("SudokuSolver", "SudokuSolver", nullptr));
         solveButton->setText(QCoreApplication::translate("SudokuSolver", "Solve", nullptr));
+        solveTimeLabel->setText(QCoreApplication::translate("SudokuSolver", "Solve Time: 0", nullptr));
+        solveCyclesLabel->setText(QCoreApplication::translate("SudokuSolver", "Solve Cycles: 0", nullptr));
+        generalLabel->setText(QCoreApplication::translate("SudokuSolver", "Status", nullptr));
+        clearButton->setText(QCoreApplication::translate("SudokuSolver", "Clear", nullptr));
     } // retranslateUi
 
 };

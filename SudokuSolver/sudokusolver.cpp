@@ -1,7 +1,7 @@
 ////////////////////////////////////////
 // Author:              Chris Murphy
 // Date created:        04.06.20
-// Date last edited:    09.06.20
+// Date last edited:    14.06.20
 ////////////////////////////////////////
 #include "sudokusolver.h"
 #include "ui_sudokusolver.h"
@@ -33,6 +33,10 @@ SudokuSolver::SudokuSolver(QWidget* parent) : QWidget(parent), ui(new Ui::Sudoku
         columns[cellColumnIndex].append(cell);
         regions[cellRegionIndex].append(cell);
     }
+
+    // Creates the timer to repeatedly call the updateSolving() function until the puzzle is solved/deemed invalid.
+    updateSolvingTimer = new QTimer(this);
+    connect(updateSolvingTimer, &QTimer::timeout, this, QOverload<>::of(&SudokuSolver::updateSolving));
 }
 
 SudokuSolver::~SudokuSolver()
@@ -42,10 +46,7 @@ SudokuSolver::~SudokuSolver()
 
 void SudokuSolver::on_solveButton_clicked()
 {
-    // Creates a timer to repeatedly call the updateSolving() function until the puzzle is solved/deemed invalid.
-    QTimer* timer = new QTimer(this);
-    connect(timer, &QTimer::timeout, this, QOverload<>::of(&SudokuSolver::updateSolving));
-    timer->start(updateSolverCallInterval);
+    updateSolvingTimer->start(updateSolvingCallInterval);
 
     // Disables the spinboxes and solve button so that the user cannot interfere with the solving process.
     QList<QSpinBox*> spinBoxes = this->findChildren<QSpinBox*>();
@@ -68,6 +69,29 @@ void SudokuSolver::on_solveButton_clicked()
     solvingStack.push(emptyCellsStack.top());
     emptyCellsStack.pop();
     solvingStack.top().setValue(1);
+
+    // Resets the solve timer and cycle counter.
+    solveTimer.restart();
+    solveCycles = 0;
+}
+
+void SudokuSolver::on_clearButton_clicked()
+{
+    for(int i = 0; i < rows.count(); ++i)
+    {
+        for(int j = 0; j < rows.count(); ++j)
+        {
+            rows[i][j].setValue(0);
+        }
+    }
+
+    clearTimerLabels();
+    ui->solveButton->setEnabled(true);
+}
+
+void SudokuSolver::on_resetButton_clicked()
+{
+
 }
 
 bool SudokuSolver::getIfCellValueIsValid(const SudokuCell& cell)
@@ -97,12 +121,19 @@ bool SudokuSolver::getIfNonZeroValueRepeatsInCells(const QList<SudokuCell>& cell
 
 void SudokuSolver::updateSolving()
 {
-    // If the current top cell in the solving stack contains a valid value, adds the next empty cell to the solving stack and changes its value to 1.
+    // If the current top cell in the solving stack contains a valid value:
     if(solvingStack.top().getValue() <= 9 && getIfCellValueIsValid(solvingStack.top()))
     {
-        solvingStack.push(emptyCellsStack.top());
-        emptyCellsStack.pop();
-        solvingStack.top().setValue(1);
+        // If there are no empty cells left and all of the current cells are valid, this means the sudoku is solved.
+        if(emptyCellsStack.isEmpty())
+            onSolveCompleted();
+        // Else adds the next empty cell to the solving stack and changes its value to 1.
+        else
+        {
+            solvingStack.push(emptyCellsStack.top());
+            emptyCellsStack.pop();
+            solvingStack.top().setValue(1);
+        }
     }
     // Else if the current top cell in the solving stack contains an invalid value:
     else
@@ -120,9 +151,11 @@ void SudokuSolver::updateSolving()
             moveToPreviousValidCellAndIncrement();
         }
     }
+
+    solveCycles++;
+    updateTimerLabels();
 }
 
-// A recursive function which pops the solving stack cells until a valid (non-9) cell is found, then increments its value by 1.
 void SudokuSolver::moveToPreviousValidCellAndIncrement()
 {
     if(solvingStack.top().getValue() + 1 <= 9)
@@ -136,3 +169,29 @@ void SudokuSolver::moveToPreviousValidCellAndIncrement()
         moveToPreviousValidCellAndIncrement();
     }
 }
+
+void SudokuSolver::onSolveCompleted()
+{
+    updateSolvingTimer->stop();
+
+    ui->generalLabel->setText("Sudoku solved!");
+}
+
+void SudokuSolver::updateTimerLabels()
+{
+    // The object used to convert the elapsed milliseconds provided by the solve timer into a more easily readable hour:minuts:second:millisecond format for the label.
+    QTime solveTime(0, 0, 0, 0);
+    solveTime = solveTime.addMSecs(solveTimer.elapsed());
+    ui->solveTimeLabel->setText("Solve Time: " + QString::number(solveTime.hour()) + ":" + QString::number(solveTime.minute()) + ":" + QString::number(solveTime.second()) + ":" + QString::number(solveTime.msec()));
+
+    ui->solveCyclesLabel->setText("Solve Cycles: " + QString::number(solveCycles));
+}
+
+void SudokuSolver::clearTimerLabels()
+{
+    ui->solveTimeLabel->setText("Solve Time: " + QString::number(0) + ":" + QString::number(0) + ":" + QString::number(0) + ":" + QString::number(0));
+
+    ui->solveCyclesLabel->setText("Solve Cycles: " + QString::number(0));
+}
+
+
