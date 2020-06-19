@@ -1,7 +1,7 @@
 ////////////////////////////////////////
 // Author:              Chris Murphy
 // Date created:        04.06.20
-// Date last edited:    14.06.20
+// Date last edited:    19.06.20
 ////////////////////////////////////////
 #ifndef SUDOKUSOLVER_H
 #define SUDOKUSOLVER_H
@@ -35,6 +35,10 @@ private slots:
 
     void on_resetButton_clicked();
 
+    void on_cycleIntervalSlider_sliderMoved(int position);
+
+    void on_cycleIntervalSlider_valueChanged(int value);
+
 private:
     Ui::SudokuSolver* ui; // A dynamic pointer to the ui object used to handle the widget and its elements.
     QElapsedTimer solveTimer; // A timer used retrieve the elapsed time since the solving process began.
@@ -43,8 +47,7 @@ private:
     QList<QList<SudokuCell>> regions; // A list of nine lists, each of which contains all the cells of one 9x9 'region' block of the sudoku grid.
     QStack<SudokuCell> emptyCellsStack; // A stack used to contain the empty cells to be solved during the solving process.
     QStack<SudokuCell> solvingStack; // A stack used to contain the cells which have been modified during the depth-first solving process.
-    QTimer* updateSolvingTimer; // The timer which will repeatedly call the updateSolving() function until the puzzle is solved/deemed invalid.
-    const int updateSolvingCallInterval = 1; // The number of milliseconds between each call of the updateSolver() function when the sudoku is in the process of being solved.
+    QTimer* updateSolvingTimer; // The timer which will repeatedly call the updateSolving() function until the puzzle is solved/deemed invalid.    
     uint solveCycles; // The number of cycles which have passed since the solving process began.
 
     // Checks the row, column, and region that the specified cell belongs to in order to see if its current number value is repeated in any of them - returns true if not, else returns false.

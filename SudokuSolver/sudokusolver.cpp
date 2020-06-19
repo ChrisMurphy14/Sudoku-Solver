@@ -1,7 +1,7 @@
 ////////////////////////////////////////
 // Author:              Chris Murphy
 // Date created:        04.06.20
-// Date last edited:    14.06.20
+// Date last edited:    19.06.20
 ////////////////////////////////////////
 #include "sudokusolver.h"
 #include "ui_sudokusolver.h"
@@ -46,7 +46,7 @@ SudokuSolver::~SudokuSolver()
 
 void SudokuSolver::on_solveButton_clicked()
 {
-    updateSolvingTimer->start(updateSolvingCallInterval);
+    updateSolvingTimer->start(ui->cycleIntervalSlider->value());
 
     // Disables the spinboxes and solve button so that the user cannot interfere with the solving process.
     QList<QSpinBox*> spinBoxes = this->findChildren<QSpinBox*>();
@@ -92,6 +92,18 @@ void SudokuSolver::on_clearButton_clicked()
 void SudokuSolver::on_resetButton_clicked()
 {
 
+}
+
+void SudokuSolver::on_cycleIntervalSlider_sliderMoved(int position)
+{
+
+}
+
+void SudokuSolver::on_cycleIntervalSlider_valueChanged(int value)
+{
+    ui->cycleIntervalLabel->setText("Milliseconds between cycles: " + QString::number(value));
+
+    updateSolvingTimer->setInterval(value);
 }
 
 bool SudokuSolver::getIfCellValueIsValid(const SudokuCell& cell)
@@ -193,5 +205,3 @@ void SudokuSolver::clearTimerLabels()
 
     ui->solveCyclesLabel->setText("Solve Cycles: " + QString::number(0));
 }
-
-

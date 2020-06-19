@@ -15,6 +15,7 @@
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QPushButton>
+#include <QtWidgets/QSlider>
 #include <QtWidgets/QSpinBox>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
@@ -167,6 +168,9 @@ public:
     QLabel *solveCyclesLabel;
     QLabel *generalLabel;
     QPushButton *clearButton;
+    QPushButton *resetButton;
+    QSlider *cycleIntervalSlider;
+    QLabel *cycleIntervalLabel;
 
     void setupUi(QWidget *SudokuSolver)
     {
@@ -1085,6 +1089,23 @@ public:
         clearButton = new QPushButton(SudokuSolver);
         clearButton->setObjectName(QString::fromUtf8("clearButton"));
         clearButton->setGeometry(QRect(180, 410, 80, 21));
+        resetButton = new QPushButton(SudokuSolver);
+        resetButton->setObjectName(QString::fromUtf8("resetButton"));
+        resetButton->setGeometry(QRect(130, 460, 80, 21));
+        cycleIntervalSlider = new QSlider(SudokuSolver);
+        cycleIntervalSlider->setObjectName(QString::fromUtf8("cycleIntervalSlider"));
+        cycleIntervalSlider->setGeometry(QRect(470, 530, 281, 16));
+        cycleIntervalSlider->setMinimum(1);
+        cycleIntervalSlider->setMaximum(1000);
+        cycleIntervalSlider->setSingleStep(50);
+        cycleIntervalSlider->setPageStep(50);
+        cycleIntervalSlider->setOrientation(Qt::Horizontal);
+        cycleIntervalSlider->setTickPosition(QSlider::TicksAbove);
+        cycleIntervalSlider->setTickInterval(50);
+        cycleIntervalLabel = new QLabel(SudokuSolver);
+        cycleIntervalLabel->setObjectName(QString::fromUtf8("cycleIntervalLabel"));
+        cycleIntervalLabel->setGeometry(QRect(490, 490, 171, 16));
+        cycleIntervalLabel->setWordWrap(true);
 
         retranslateUi(SudokuSolver);
 
@@ -1099,6 +1120,8 @@ public:
         solveCyclesLabel->setText(QCoreApplication::translate("SudokuSolver", "Solve Cycles: 0", nullptr));
         generalLabel->setText(QCoreApplication::translate("SudokuSolver", "Status", nullptr));
         clearButton->setText(QCoreApplication::translate("SudokuSolver", "Clear", nullptr));
+        resetButton->setText(QCoreApplication::translate("SudokuSolver", "Reset", nullptr));
+        cycleIntervalLabel->setText(QCoreApplication::translate("SudokuSolver", "Milliseconds Between Cycles: 1", nullptr));
     } // retranslateUi
 
 };
