@@ -166,7 +166,7 @@ public:
     QFrame *line_6;
     QLabel *solveTimeLabel;
     QLabel *solveCyclesLabel;
-    QLabel *generalLabel;
+    QLabel *statusLabel;
     QPushButton *clearButton;
     QPushButton *resetButton;
     QSlider *cycleIntervalSlider;
@@ -848,7 +848,7 @@ public:
 
         layoutWidget_9 = new QWidget(SudokuSolver);
         layoutWidget_9->setObjectName(QString::fromUtf8("layoutWidget_9"));
-        layoutWidget_9->setGeometry(QRect(310, 280, 109, 89));
+        layoutWidget_9->setGeometry(QRect(310, 280, 110, 89));
         region12 = new QVBoxLayout(layoutWidget_9);
         region12->setObjectName(QString::fromUtf8("region12"));
         region12->setContentsMargins(0, 0, 0, 0);
@@ -865,6 +865,10 @@ public:
         cell46 = new QSpinBox(layoutWidget_9);
         cell46->setObjectName(QString::fromUtf8("cell46"));
         cell46->setEnabled(true);
+        QFont font;
+        font.setBold(false);
+        font.setWeight(50);
+        cell46->setFont(font);
         cell46->setMaximum(9);
         cell46->setValue(0);
 
@@ -1083,9 +1087,9 @@ public:
         solveCyclesLabel = new QLabel(SudokuSolver);
         solveCyclesLabel->setObjectName(QString::fromUtf8("solveCyclesLabel"));
         solveCyclesLabel->setGeometry(QRect(470, 440, 221, 16));
-        generalLabel = new QLabel(SudokuSolver);
-        generalLabel->setObjectName(QString::fromUtf8("generalLabel"));
-        generalLabel->setGeometry(QRect(280, 480, 301, 16));
+        statusLabel = new QLabel(SudokuSolver);
+        statusLabel->setObjectName(QString::fromUtf8("statusLabel"));
+        statusLabel->setGeometry(QRect(140, 520, 301, 16));
         clearButton = new QPushButton(SudokuSolver);
         clearButton->setObjectName(QString::fromUtf8("clearButton"));
         clearButton->setGeometry(QRect(180, 410, 80, 21));
@@ -1118,7 +1122,7 @@ public:
         solveButton->setText(QCoreApplication::translate("SudokuSolver", "Solve", nullptr));
         solveTimeLabel->setText(QCoreApplication::translate("SudokuSolver", "Solve Time: 0", nullptr));
         solveCyclesLabel->setText(QCoreApplication::translate("SudokuSolver", "Solve Cycles: 0", nullptr));
-        generalLabel->setText(QCoreApplication::translate("SudokuSolver", "Status", nullptr));
+        statusLabel->setText(QCoreApplication::translate("SudokuSolver", "Enter clues and press 'Solve' to begin", nullptr));
         clearButton->setText(QCoreApplication::translate("SudokuSolver", "Clear", nullptr));
         resetButton->setText(QCoreApplication::translate("SudokuSolver", "Reset", nullptr));
         cycleIntervalLabel->setText(QCoreApplication::translate("SudokuSolver", "Milliseconds Between Cycles: 1", nullptr));

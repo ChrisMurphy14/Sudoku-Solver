@@ -1057,7 +1057,7 @@
     <rect>
      <x>310</x>
      <y>280</y>
-     <width>109</width>
+     <width>110</width>
      <height>89</height>
     </rect>
    </property>
@@ -1081,6 +1081,12 @@
        <widget class="QSpinBox" name="cell46">
         <property name="enabled">
          <bool>true</bool>
+        </property>
+        <property name="font">
+         <font>
+          <weight>50</weight>
+          <bold>false</bold>
+         </font>
         </property>
         <property name="maximum">
          <number>9</number>
@@ -1477,17 +1483,17 @@
     <string>Solve Cycles: 0</string>
    </property>
   </widget>
-  <widget class="QLabel" name="generalLabel">
+  <widget class="QLabel" name="statusLabel">
    <property name="geometry">
     <rect>
-     <x>280</x>
-     <y>480</y>
+     <x>140</x>
+     <y>520</y>
      <width>301</width>
      <height>16</height>
     </rect>
    </property>
    <property name="text">
-    <string>Status</string>
+    <string>Enter clues and press 'Solve' to begin</string>
    </property>
   </widget>
   <widget class="QPushButton" name="clearButton">

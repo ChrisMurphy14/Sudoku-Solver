@@ -1,7 +1,7 @@
 ////////////////////////////////////////
 // Author:              Chris Murphy
 // Date created:        04.06.20
-// Date last edited:    19.06.20
+// Date last edited:    21.06.20
 ////////////////////////////////////////
 #include "sudokusolver.h"
 #include "ui_sudokusolver.h"
@@ -37,6 +37,9 @@ SudokuSolver::SudokuSolver(QWidget* parent) : QWidget(parent), ui(new Ui::Sudoku
     // Creates the timer to repeatedly call the updateSolving() function until the puzzle is solved/deemed invalid.
     updateSolvingTimer = new QTimer(this);
     connect(updateSolvingTimer, &QTimer::timeout, this, QOverload<>::of(&SudokuSolver::updateSolving));
+
+    ui->resetButton->setEnabled(false);
+    resetLabelsToDefault();
 }
 
 SudokuSolver::~SudokuSolver()
@@ -48,13 +51,26 @@ void SudokuSolver::on_solveButton_clicked()
 {
     updateSolvingTimer->start(ui->cycleIntervalSlider->value());
 
-    // Disables the spinboxes and solve button so that the user cannot interfere with the solving process.
+    // Disables the spinboxes and buttons so that the user cannot interfere with the solving process while also making the clue spinbox values bold so they stand out.
     QList<QSpinBox*> spinBoxes = this->findChildren<QSpinBox*>();
+    QFont boldFont = spinBoxes[0]->font();
+    boldFont.setWeight(QFont::Bold);
     for(int i = 0; i < spinBoxes.size(); ++i)
     {
-        //spinBoxes[i]->setEnabled(false);
+        if(spinBoxes[i]->value() != 0)
+            spinBoxes[i]->setFont(boldFont);
+
+        spinBoxes[i]->setEnabled(false);
     }
     ui->solveButton->setEnabled(false);
+    ui->clearButton->setEnabled(false);
+
+    // Checks to insure the clue cells are immediately valid - if not, cancels the process.
+    if(!getIfAllCellsAreValid())
+    {
+        cancelSolving("Error: invalid clues entered, this puzzle cannot be solved");
+        return;
+    }
 
     // Adds each of the currently empty cells to the stack of cells to be solved - does this in reverse order so the initial cell on the top of the stack is the closest to the upper-left.
     for(int i = rows.count() - 1; i > -1; --i)
@@ -73,37 +89,66 @@ void SudokuSolver::on_solveButton_clicked()
     // Resets the solve timer and cycle counter.
     solveTimer.restart();
     solveCycles = 0;
+
+    ui->statusLabel->setText("Solving...");
 }
 
 void SudokuSolver::on_clearButton_clicked()
 {
-    for(int i = 0; i < rows.count(); ++i)
+    QList<QSpinBox*> spinBoxes = this->findChildren<QSpinBox*>();
+    QFont standardFont = spinBoxes[0]->font();
+    standardFont.setWeight(QFont::Normal);
+    for(int i = 0; i < spinBoxes.size(); ++i)
     {
-        for(int j = 0; j < rows.count(); ++j)
-        {
-            rows[i][j].setValue(0);
-        }
+        spinBoxes[i]->setEnabled(true);
+        spinBoxes[i]->setValue(0);
+        spinBoxes[i]->setFont(standardFont);
     }
 
-    clearTimerLabels();
     ui->solveButton->setEnabled(true);
+    ui->resetButton->setEnabled(false);
+    resetLabelsToDefault();
 }
 
 void SudokuSolver::on_resetButton_clicked()
 {
+    QList<QSpinBox*> spinBoxes = this->findChildren<QSpinBox*>();
+    QFont standardFont = spinBoxes[0]->font();
+    standardFont.setWeight(QFont::Normal);
+    for(int i = 0; i < spinBoxes.size(); ++i)
+    {
+        // If the spinbox value isn't bold, clears it - this way all the original clues which were emboldened will remain once the grid is reset.
+        if(!spinBoxes[i]->font().bold())
+            spinBoxes[i]->setValue(0);
 
-}
+        spinBoxes[i]->setEnabled(true);
+        spinBoxes[i]->setFont(standardFont);
+    }
 
-void SudokuSolver::on_cycleIntervalSlider_sliderMoved(int position)
-{
-
+    ui->solveButton->setEnabled(true);
+    ui->resetButton->setEnabled(false);
+    resetLabelsToDefault();
 }
 
 void SudokuSolver::on_cycleIntervalSlider_valueChanged(int value)
 {
-    ui->cycleIntervalLabel->setText("Milliseconds between cycles: " + QString::number(value));
+    ui->cycleIntervalLabel->setText("Milliseconds Between Cycles: " + QString::number(value));
 
     updateSolvingTimer->setInterval(value);
+}
+
+bool SudokuSolver::getIfAllCellsAreValid()
+{
+    for(int i = 0; i < rows.count(); ++i)
+    {
+        for(int j = 0; j < columns.count(); ++j)
+        {
+            if(rows[i][j].getValue() > 0 && !getIfCellValueIsValid(rows[i][j]))
+                return false;
+        }
+    }
+
+    return true;
 }
 
 bool SudokuSolver::getIfCellValueIsValid(const SudokuCell& cell)
@@ -159,6 +204,8 @@ void SudokuSolver::updateSolving()
             solvingStack.top().setValue(0);
             emptyCellsStack.push(solvingStack.top());
             solvingStack.pop();
+            if(solvingStack.empty() && !emptyCellsStack.empty())
+                cancelSolving("Error: invalid clues entered, this puzzle cannot be solved");
 
             moveToPreviousValidCellAndIncrement();
         }
@@ -177,16 +224,30 @@ void SudokuSolver::moveToPreviousValidCellAndIncrement()
         solvingStack.top().setValue(0);
         emptyCellsStack.push(solvingStack.top());
         solvingStack.pop();
+        if(solvingStack.empty() && !emptyCellsStack.empty())
+            cancelSolving("Error: invalid clues entered, this puzzle cannot be solved");
 
         moveToPreviousValidCellAndIncrement();
     }
+}
+
+// Stops the solving process and allows the user to reset/clear the grid.
+void SudokuSolver::cancelSolving(const QString& statusMessage)
+{
+    updateSolvingTimer->stop();
+
+    ui->clearButton->setEnabled(true);
+    ui->resetButton->setEnabled(true);
+    ui->statusLabel->setText(statusMessage);
 }
 
 void SudokuSolver::onSolveCompleted()
 {
     updateSolvingTimer->stop();
 
-    ui->generalLabel->setText("Sudoku solved!");
+    ui->clearButton->setEnabled(true);
+    ui->resetButton->setEnabled(true);
+    ui->statusLabel->setText("Sudoku solved!");
 }
 
 void SudokuSolver::updateTimerLabels()
@@ -199,9 +260,10 @@ void SudokuSolver::updateTimerLabels()
     ui->solveCyclesLabel->setText("Solve Cycles: " + QString::number(solveCycles));
 }
 
-void SudokuSolver::clearTimerLabels()
+void SudokuSolver::resetLabelsToDefault()
 {
     ui->solveTimeLabel->setText("Solve Time: " + QString::number(0) + ":" + QString::number(0) + ":" + QString::number(0) + ":" + QString::number(0));
-
     ui->solveCyclesLabel->setText("Solve Cycles: " + QString::number(0));
+
+    ui->statusLabel->setText("Enter clues and press 'Solve' to begin");
 }

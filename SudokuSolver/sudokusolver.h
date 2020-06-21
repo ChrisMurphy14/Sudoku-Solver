@@ -1,7 +1,7 @@
 ////////////////////////////////////////
 // Author:              Chris Murphy
 // Date created:        04.06.20
-// Date last edited:    19.06.20
+// Date last edited:    21.06.20
 ////////////////////////////////////////
 #ifndef SUDOKUSOLVER_H
 #define SUDOKUSOLVER_H
@@ -35,8 +35,6 @@ private slots:
 
     void on_resetButton_clicked();
 
-    void on_cycleIntervalSlider_sliderMoved(int position);
-
     void on_cycleIntervalSlider_valueChanged(int value);
 
 private:
@@ -47,8 +45,12 @@ private:
     QList<QList<SudokuCell>> regions; // A list of nine lists, each of which contains all the cells of one 9x9 'region' block of the sudoku grid.
     QStack<SudokuCell> emptyCellsStack; // A stack used to contain the empty cells to be solved during the solving process.
     QStack<SudokuCell> solvingStack; // A stack used to contain the cells which have been modified during the depth-first solving process.
-    QTimer* updateSolvingTimer; // The timer which will repeatedly call the updateSolving() function until the puzzle is solved/deemed invalid.    
+    QTimer* updateSolvingTimer; // The timer which will repeatedly call the updateSolving() function until the puzzle is solved/deemed invalid.
+    //bool isSolving; // Whether or not the solving process is currently in progress.
     uint solveCycles; // The number of cycles which have passed since the solving process began.
+
+    // Checks every non-zero cell in the grid and returns true if every one is valid (e.g. no repeated value in the same row, column, or region) - else returns false.
+    bool getIfAllCellsAreValid();
 
     // Checks the row, column, and region that the specified cell belongs to in order to see if its current number value is repeated in any of them - returns true if not, else returns false.
     bool getIfCellValueIsValid(const SudokuCell& cell);
@@ -62,14 +64,17 @@ private:
     // A recursive function which pops the solving stack cells until a valid (non-9) cell is found, then increments its value by 1.
     void moveToPreviousValidCellAndIncrement();
 
+    // Stops the solving process and allows the user to reset/clear the grid.
+    void cancelSolving(const QString& statusMessage);
+
     // Called when the puzzle is successfully solved.
     void onSolveCompleted();
 
     // Updates the solveTimeLabel and solveCyclesLabel to both display the current values stored in the solveTimer and solveCycles variables.
     void updateTimerLabels();
 
-    // Sets the solveTimeLabel and solveCyclesLabel to both display zero.
-    void clearTimerLabels();
+    // Sets the labels to their default values.
+    void resetLabelsToDefault();
 };
 
 #endif
