@@ -1,7 +1,7 @@
 ////////////////////////////////////////
 // Author:              Chris Murphy
 // Date created:        04.06.20
-// Date last edited:    21.06.20
+// Date last edited:    22.06.20
 ////////////////////////////////////////
 #ifndef SUDOKUSOLVER_H
 #define SUDOKUSOLVER_H
@@ -65,7 +65,7 @@ private:
     void moveToPreviousValidCellAndIncrement();
 
     // Stops the solving process and allows the user to reset/clear the grid.
-    void cancelSolving(const QString& statusMessage);
+    void cancelSolving(const QString& message);
 
     // Called when the puzzle is successfully solved.
     void onSolveCompleted();

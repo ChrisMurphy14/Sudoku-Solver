@@ -1,7 +1,7 @@
 ////////////////////////////////////////
 // Author:              Chris Murphy
 // Date created:        04.06.20
-// Date last edited:    21.06.20
+// Date last edited:    22.06.20
 ////////////////////////////////////////
 #include "sudokusolver.h"
 #include "ui_sudokusolver.h"
@@ -63,12 +63,14 @@ void SudokuSolver::on_solveButton_clicked()
         spinBoxes[i]->setEnabled(false);
     }
     ui->solveButton->setEnabled(false);
-    ui->clearButton->setEnabled(false);
+    ui->resetButton->setEnabled(true);
+    ui->clearButton->setEnabled(true);
 
+    bool areCluesValid = getIfAllCellsAreValid();
     // Checks to insure the clue cells are immediately valid - if not, cancels the process.
-    if(!getIfAllCellsAreValid())
+    if(!areCluesValid)
     {
-        cancelSolving("Error: invalid clues entered, this puzzle cannot be solved");
+        cancelSolving("Invalid clues entered - there are repeated values in at least one row, column, or region");
         return;
     }
 
@@ -81,6 +83,13 @@ void SudokuSolver::on_solveButton_clicked()
                 emptyCellsStack.push(rows[i][j]);
         }
     }
+    // If all the clue cells are valid and there are no empty cells, the user has entered a complete puzzle solution.
+    if(areCluesValid && emptyCellsStack.empty())
+    {
+        cancelSolving("Solving process aborted - complete puzzle solution has already been entered");
+        return;
+    }
+
     // Moves the first cell to be solved to the top of the solving stack and sets the initial value to 1 to begin the solving process.
     solvingStack.push(emptyCellsStack.top());
     emptyCellsStack.pop();
@@ -95,6 +104,8 @@ void SudokuSolver::on_solveButton_clicked()
 
 void SudokuSolver::on_clearButton_clicked()
 {
+    updateSolvingTimer->stop();
+
     QList<QSpinBox*> spinBoxes = this->findChildren<QSpinBox*>();
     QFont standardFont = spinBoxes[0]->font();
     standardFont.setWeight(QFont::Normal);
@@ -112,6 +123,8 @@ void SudokuSolver::on_clearButton_clicked()
 
 void SudokuSolver::on_resetButton_clicked()
 {
+    updateSolvingTimer->stop();
+
     QList<QSpinBox*> spinBoxes = this->findChildren<QSpinBox*>();
     QFont standardFont = spinBoxes[0]->font();
     standardFont.setWeight(QFont::Normal);
@@ -205,9 +218,9 @@ void SudokuSolver::updateSolving()
             emptyCellsStack.push(solvingStack.top());
             solvingStack.pop();
             if(solvingStack.empty() && !emptyCellsStack.empty())
-                cancelSolving("Error: invalid clues entered, this puzzle cannot be solved");
-
-            moveToPreviousValidCellAndIncrement();
+                cancelSolving("Solving process ended - this puzzle has no valid solutions");
+            else
+                moveToPreviousValidCellAndIncrement();
         }
     }
 
@@ -225,20 +238,19 @@ void SudokuSolver::moveToPreviousValidCellAndIncrement()
         emptyCellsStack.push(solvingStack.top());
         solvingStack.pop();
         if(solvingStack.empty() && !emptyCellsStack.empty())
-            cancelSolving("Error: invalid clues entered, this puzzle cannot be solved");
-
-        moveToPreviousValidCellAndIncrement();
+            cancelSolving("Solving process ended - this puzzle has no valid solutions");
+        else
+            moveToPreviousValidCellAndIncrement();
     }
 }
 
-// Stops the solving process and allows the user to reset/clear the grid.
-void SudokuSolver::cancelSolving(const QString& statusMessage)
+void SudokuSolver::cancelSolving(const QString& message)
 {
     updateSolvingTimer->stop();
 
     ui->clearButton->setEnabled(true);
     ui->resetButton->setEnabled(true);
-    ui->statusLabel->setText(statusMessage);
+    ui->statusLabel->setText(message);
 }
 
 void SudokuSolver::onSolveCompleted()
