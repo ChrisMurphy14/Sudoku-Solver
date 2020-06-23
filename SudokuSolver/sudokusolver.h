@@ -1,7 +1,7 @@
 ////////////////////////////////////////
 // Author:              Chris Murphy
 // Date created:        04.06.20
-// Date last edited:    22.06.20
+// Date last edited:    23.06.20
 ////////////////////////////////////////
 #ifndef SUDOKUSOLVER_H
 #define SUDOKUSOLVER_H
@@ -45,8 +45,8 @@ private:
     QList<QList<SudokuCell>> regions; // A list of nine lists, each of which contains all the cells of one 9x9 'region' block of the sudoku grid.
     QStack<SudokuCell> emptyCellsStack; // A stack used to contain the empty cells to be solved during the solving process.
     QStack<SudokuCell> solvingStack; // A stack used to contain the cells which have been modified during the depth-first solving process.
-    QTimer* updateSolvingTimer; // The timer which will repeatedly call the updateSolving() function until the puzzle is solved/deemed invalid.
-    //bool isSolving; // Whether or not the solving process is currently in progress.
+    QTimer* updateSolvingTimer; // The timer which will repeatedly call the updateSolving() function until the puzzle is solved/deemed invalid.    
+    QTimer* updateElapsedSolvingTimeTimer; // A timer called every millisecond
     uint solveCycles; // The number of cycles which have passed since the solving process began.
 
     // Checks every non-zero cell in the grid and returns true if every one is valid (e.g. no repeated value in the same row, column, or region) - else returns false.
@@ -60,6 +60,9 @@ private:
 
     // The function used to run through a single iteration of the algorithm to solve the current sudoku puzzle.
     void updateSolving();
+
+    // The function used to update the displayed elapsed solving time label.
+    void updateElapsedSolvingTime();
 
     // A recursive function which pops the solving stack cells until a valid (non-9) cell is found, then increments its value by 1.
     void moveToPreviousValidCellAndIncrement();

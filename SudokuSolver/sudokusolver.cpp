@@ -1,7 +1,7 @@
 ////////////////////////////////////////
 // Author:              Chris Murphy
 // Date created:        04.06.20
-// Date last edited:    22.06.20
+// Date last edited:    23.06.20
 ////////////////////////////////////////
 #include "sudokusolver.h"
 #include "ui_sudokusolver.h"
@@ -34,9 +34,11 @@ SudokuSolver::SudokuSolver(QWidget* parent) : QWidget(parent), ui(new Ui::Sudoku
         regions[cellRegionIndex].append(cell);
     }
 
-    // Creates the timer to repeatedly call the updateSolving() function until the puzzle is solved/deemed invalid.
+    // Creates the timers used to repeatedly call the updateSolving() and updateElapsedSolvingTime() functions until the puzzle is solved/deemed invalid.
     updateSolvingTimer = new QTimer(this);
     connect(updateSolvingTimer, &QTimer::timeout, this, QOverload<>::of(&SudokuSolver::updateSolving));
+    updateElapsedSolvingTimeTimer = new QTimer(this);
+    connect(updateElapsedSolvingTimeTimer, &QTimer::timeout, this, QOverload<>::of(&SudokuSolver::updateElapsedSolvingTime));
 
     ui->resetButton->setEnabled(false);
     resetLabelsToDefault();
@@ -50,6 +52,7 @@ SudokuSolver::~SudokuSolver()
 void SudokuSolver::on_solveButton_clicked()
 {
     updateSolvingTimer->start(ui->cycleIntervalSlider->value());
+    updateElapsedSolvingTimeTimer->start(1);
 
     // Disables the spinboxes and buttons so that the user cannot interfere with the solving process while also making the clue spinbox values bold so they stand out.
     QList<QSpinBox*> spinBoxes = this->findChildren<QSpinBox*>();
@@ -105,6 +108,7 @@ void SudokuSolver::on_solveButton_clicked()
 void SudokuSolver::on_clearButton_clicked()
 {
     updateSolvingTimer->stop();
+    updateElapsedSolvingTimeTimer->stop();
 
     QList<QSpinBox*> spinBoxes = this->findChildren<QSpinBox*>();
     QFont standardFont = spinBoxes[0]->font();
@@ -124,6 +128,7 @@ void SudokuSolver::on_clearButton_clicked()
 void SudokuSolver::on_resetButton_clicked()
 {
     updateSolvingTimer->stop();
+    updateElapsedSolvingTimeTimer->stop();
 
     QList<QSpinBox*> spinBoxes = this->findChildren<QSpinBox*>();
     QFont standardFont = spinBoxes[0]->font();
@@ -225,6 +230,10 @@ void SudokuSolver::updateSolving()
     }
 
     solveCycles++;
+}
+
+void SudokuSolver::updateElapsedSolvingTime()
+{
     updateTimerLabels();
 }
 
@@ -247,6 +256,7 @@ void SudokuSolver::moveToPreviousValidCellAndIncrement()
 void SudokuSolver::cancelSolving(const QString& message)
 {
     updateSolvingTimer->stop();
+    updateElapsedSolvingTimeTimer->stop();
 
     ui->clearButton->setEnabled(true);
     ui->resetButton->setEnabled(true);
@@ -256,6 +266,7 @@ void SudokuSolver::cancelSolving(const QString& message)
 void SudokuSolver::onSolveCompleted()
 {
     updateSolvingTimer->stop();
+    updateElapsedSolvingTimeTimer->stop();
 
     ui->clearButton->setEnabled(true);
     ui->resetButton->setEnabled(true);

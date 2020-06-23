@@ -19,7 +19,7 @@ CXXFLAGS      = -nologo -Zc:wchar_t -FS -Zc:rvalueCast -Zc:inline -Zc:strictStri
 INCPATH       = -I..\SudokuSolver -I. -IC:\Qt\5.14.2\msvc2017\include -IC:\Qt\5.14.2\msvc2017\include\QtWidgets -IC:\Qt\5.14.2\msvc2017\include\QtGui -IC:\Qt\5.14.2\msvc2017\include\QtANGLE -IC:\Qt\5.14.2\msvc2017\include\QtCore -Idebug -I. -I/include -IC:\Qt\5.14.2\msvc2017\mkspecs\win32-msvc 
 LINKER        = link
 LFLAGS        = /NOLOGO /DYNAMICBASE /NXCOMPAT /DEBUG /SUBSYSTEM:WINDOWS "/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' publicKeyToken='6595b64144ccf1df' language='*' processorArchitecture='*'"
-LIBS          = C:\Qt\5.14.2\msvc2017\lib\Qt5Widgetsd.lib C:\Qt\5.14.2\msvc2017\lib\Qt5Guid.lib C:\Qt\5.14.2\msvc2017\lib\Qt5Cored.lib  C:\Qt\5.14.2\msvc2017\lib\qtmaind.lib /LIBPATH:C:\opensslx86\lib /LIBPATH:C:\Utils\my_sql\mysql-5.7.25-win32\lib /LIBPATH:C:\Utils\postgresqlx86\pgsql\lib shell32.lib 
+LIBS          = C:\Qt\5.14.2\msvc2017\lib\Qt5Widgetsd.lib C:\Qt\5.14.2\msvc2017\lib\Qt5Guid.lib C:\Qt\5.14.2\msvc2017\lib\Qt5Cored.lib debug\SudokuSolver_resource.res  C:\Qt\5.14.2\msvc2017\lib\qtmaind.lib /LIBPATH:C:\opensslx86\lib /LIBPATH:C:\Utils\my_sql\mysql-5.7.25-win32\lib /LIBPATH:C:\Utils\postgresqlx86\pgsql\lib shell32.lib 
 QMAKE         = C:\Qt\5.14.2\msvc2017\bin\qmake.exe
 DEL_FILE      = del
 CHK_DIR_EXISTS= if not exist
@@ -40,7 +40,7 @@ IDC           = idc
 IDL           = midl
 ZIP           = zip -r -9
 DEF_FILE      = 
-RES_FILE      = 
+RES_FILE      = debug\SudokuSolver_resource.res
 SED           = $(QMAKE) -install sed
 MOVE          = move
 
@@ -136,11 +136,14 @@ DESTDIR_TARGET = debug\SudokuSolver.exe
 first: all
 all: Makefile.Debug  debug\SudokuSolver.exe
 
-debug\SudokuSolver.exe: C:\Qt\5.14.2\msvc2017\lib\Qt5Widgetsd.lib C:\Qt\5.14.2\msvc2017\lib\Qt5Guid.lib C:\Qt\5.14.2\msvc2017\lib\Qt5Cored.lib C:\Qt\5.14.2\msvc2017\lib\qtmaind.lib ui_sudokusolver.h $(OBJECTS) 
+debug\SudokuSolver.exe: C:\Qt\5.14.2\msvc2017\lib\Qt5Widgetsd.lib C:\Qt\5.14.2\msvc2017\lib\Qt5Guid.lib C:\Qt\5.14.2\msvc2017\lib\Qt5Cored.lib C:\Qt\5.14.2\msvc2017\lib\qtmaind.lib ui_sudokusolver.h $(OBJECTS) debug\SudokuSolver_resource.res
 	$(LINKER) $(LFLAGS) /MANIFEST:embed /OUT:$(DESTDIR_TARGET) @<<
 debug\main.obj debug\sudokucell.obj debug\sudokusolver.obj debug\moc_sudokusolver.obj
 $(LIBS)
 <<
+
+debug\SudokuSolver_resource.res: SudokuSolver_resource.rc
+	rc /NOLOGO -D_DEBUG $(DEFINES) -fo debug\SudokuSolver_resource.res SudokuSolver_resource.rc
 
 qmake: FORCE
 	@$(QMAKE) -o Makefile.Debug ..\SudokuSolver\SudokuSolver.pro -spec win32-msvc "CONFIG+=qtquickcompiler"
@@ -153,6 +156,7 @@ dist:
 clean: compiler_clean 
 	-$(DEL_FILE) debug\main.obj debug\sudokucell.obj debug\sudokusolver.obj debug\moc_sudokusolver.obj
 	-$(DEL_FILE) debug\SudokuSolver.vc.pdb debug\SudokuSolver.ilk debug\SudokuSolver.idb
+	-$(DEL_FILE) debug\SudokuSolver_resource.res
 
 distclean: clean 
 	-$(DEL_FILE) .qmake.stash debug\SudokuSolver.pdb
